@@ -22,7 +22,7 @@ void setup() {
   init_TIM1();
   sei(); // Enable interrupts
 
-  Serial.begin(250000);
+  Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
