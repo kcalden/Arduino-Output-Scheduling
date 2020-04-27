@@ -7,29 +7,30 @@
 output_schedule write_schedule;
 
 // Setup timer 1
-inline void init_TIM1()
-{
-  TCCR1A = 0;
-  TCCR1B = 0;
-  TCCR1C = 0;
-  
-  // Set clock select in control register B (0b010 for 8 prescaler)
-  TCCR1B |= (1<<CS11);
-
-  // Enable timer overflow interrupt
-  TIMSK1 |= (1<<TOIE1);
-  
-  // Set counter high and low register to 0
-  TCNT1H = 0;
-  TCNT1L = 0;
-}
+inline void init_TIM1();
 
 // Preload timer 1 counter with time
-inline void set_TCNT1(unsigned int count)
-{
-  unsigned int preload = 0xFFFF - count;
-  TCNT1L = (preload & 0xFF);
-  TCNT1H = (preload & 0xFF00) >> 8;
+inline void set_TCNT1(unsigned int count);
+
+void setup() {
+
+  // Initialize timers
+  cli(); // Disable interrupts
+  init_TIM1();
+  sei(); // Enable interrupts
+
+  Serial.begin(250000);
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+uint8_t packet_buf[6];
+void loop() {
+  while(Serial.available())
+  {
+    // Read into the buffer and write it to the schedule
+    if(Serial.readBytes(packet_buf, 6) == 6)
+      write_schedule.addPacket(packet_buf);
+  }
 }
 
 ISR(TIMER1_OVF_vect)
@@ -53,19 +54,26 @@ ISR(TIMER1_OVF_vect)
   write_schedule.run();
 }
 
-void setup() {
-  cli(); // Disable interrupts
-  Serial.begin(250000);
-  pinMode(LED_BUILTIN, OUTPUT);
-  init_TIM1();
-  sei();
+inline void init_TIM1()
+{
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCCR1C = 0;
+  
+  // Set clock select in control register B (0b010 for 8 prescaler)
+  TCCR1B |= (1<<CS11);
+
+  // Enable timer overflow interrupt
+  TIMSK1 |= (1<<TOIE1);
+  
+  // Set counter high and low register to 0
+  TCNT1H = 0;
+  TCNT1L = 0;
 }
 
-uint8_t packet_buf[6];
-void loop() {
-  while(Serial.available())
-  {
-    if(Serial.readBytes(packet_buf, 6) == 6)
-      write_schedule.addPacket(packet_buf);
-  }
+inline void set_TCNT1(unsigned int count)
+{
+  unsigned int preload = 0xFFFF - count;
+  TCNT1L = (preload & 0xFF);
+  TCNT1H = (preload & 0xFF00) >> 8;
 }

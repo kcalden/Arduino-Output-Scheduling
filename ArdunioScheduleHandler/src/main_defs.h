@@ -1,2 +1,1 @@
-#define LED_PIN 13
-#define MAX_BUFFER_SIZE 2048
+#define SCHEDULE_LIMIT 2048 // Max size in bytes
