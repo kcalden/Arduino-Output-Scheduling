@@ -52,7 +52,7 @@ ISR(TIMER1_OVF_vect)
   unsigned long remaining_time = write_schedule.remainingTime();
   if(write_schedule.isEmpty()) return;
 
-  if(remaining_time != 0)
+  if(remaining_time > 0)
   {
     if(remaining_time > 0xFFFF)
     {
