@@ -4,6 +4,12 @@ import time
 port = serial.Serial('COM5', 115200)
 time.sleep(1)
 
+# DEFINITIONS
+LED_BUILTIN = 13 # LED PIN
+PRESCALER = 8
+FREQ = 16000000
+TIME_PER_CYCLE = PRESCALER/FREQ
+MAX_TIME = TIME_PER_CYCLE*0xFFFFFFFF
 def digitalWrite(pin, state,delay):
     time_delay_bytelist = list(delay.to_bytes(4,'big'))
     sched_item_bytelist = [pin,state]
