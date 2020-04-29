@@ -16,18 +16,21 @@ def digitalWrite(pin, state,delay):
     time_delay_bytelist = list(delay.to_bytes(4,'big'))
     sched_item_bytelist = [pin,state]
     sched_item_bytelist.extend(time_delay_bytelist)
-    print(sched_item_bytelist)
+    # print(sched_item_bytelist)
     port.write(bytearray(sched_item_bytelist))
 
 
 # TODO: Make sure that we read in two bytes
 # Request items left 
-def getItemsLeft():
+def requestItemsLeft():
     # Request number of items that can be written
     port.write(bytearray([0x01]))
-    # Read bytes in from the serial port
+
+    # Read bytes in from the serial port and
     # Convert the bytes into an unsigned integer
     items_left_bytes = port.read(2)
+    # print(int.from_bytes(items_left_bytes, byteorder='big', signed=False))
+    time.sleep(0.2)
     return int.from_bytes(items_left_bytes, byteorder='big', signed=False)
 
 # Calculate counter value for the MCU
@@ -35,18 +38,17 @@ def calcDelay(seconds):
     if(seconds > MAX_TIME): return 0xFFFFFFFF
     return int(seconds/TIME_PER_CYCLE)
 
-## TEST CODE ##
-items_left = 10
+def sendCMD(cmd_byte):
+    port.write()
 
-digitalWrite(13, 1, calcDelay(0.25))
-digitalWrite(13, 0, calcDelay(0.25))
-digitalWrite(13, 1, calcDelay(0.25))
-digitalWrite(13, 0, calcDelay(0.25))
-# while(items_left > 0):
-#     digitalWrite(LED_BUILTIN, 1, 0xFFFFF)
-#     items_left = items_left - 1
-#     digitalWrite(LED_BUILTIN, 0, 0xFFFFF)
-#     items_left = items_left - 1
+# TEST LOOP ##
+def loop():
+    items_left = requestItemsLeft()
+    state = 1
+    while(items_left > 0):
+        digitalWrite(LED_BUILTIN, state, 0xFFFF)
+        items_left = items_left - 1
+        state = not state
 
 while(True):
-    pass
+    loop()
