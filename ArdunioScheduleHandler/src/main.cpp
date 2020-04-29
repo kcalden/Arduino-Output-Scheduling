@@ -41,8 +41,9 @@ void loop() {
         info_digitalout new_info(packet_buf,1);
 
         // If the buffer was empty, immediately trigger the interrupt
-        if(write_schedule.empty()) set_TCNT1(0);
+        bool was_empty = write_schedule.empty();
         write_schedule.push(new_info);
+        if(was_empty) set_TCNT1(1); 
         break;
     }
   }
