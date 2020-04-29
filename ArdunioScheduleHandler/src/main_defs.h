@@ -1,1 +1,1 @@
-#define SCHEDULE_LIMIT 4096 // Max size in bytes
+#define SCHEDULE_LIMIT 1000 // Max number of items in the schedule (6 bytes eachf)

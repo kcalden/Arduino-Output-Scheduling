@@ -80,5 +80,5 @@ inline bool output_schedule::isEmpty()
 inline unsigned int output_schedule::itemsLeft()
 {
     unsigned int mem_left = memory - queue.getSize();
-    return (unsigned int) (mem_left / sizeof(node<info_digitalout>));
+    return (unsigned int) (mem_left / sizeof(info_digitalout));
 }

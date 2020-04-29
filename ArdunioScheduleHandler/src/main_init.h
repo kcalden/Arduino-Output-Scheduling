@@ -1,24 +1,3 @@
-ISR(TIMER1_OVF_vect)
-{
-  unsigned long remaining_time = write_schedule.remainingTime();
-  if(write_schedule.isEmpty()) return;
-
-  if(remaining_time > 0)
-  {
-    if(remaining_time > 0xFFFF)
-    {
-      set_TCNT1(0xFFFF);
-      write_schedule.cutTime(0xFFFF);
-    }else {
-      set_TCNT1((unsigned int)remaining_time);
-      write_schedule.cutTime(remaining_time);
-    }
-    return;
-  }
-
-  write_schedule.run();
-}
-
 void init_TIM1()
 {
   TCCR1A = 0;
@@ -46,7 +25,7 @@ void set_TCNT1(unsigned int count)
 void setup_Serial()
 {
   Serial.begin(115200);
-  Serial.setTimeout(300);
+  Serial.setTimeout(100);
 }
 
 void setup_Pins()
