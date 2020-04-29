@@ -14,7 +14,7 @@ struct info_digitalout
     // Byte packet constructor for info_digitalout
     // Converts bytes to members of this structure and store them
     // [ PIN STATE DELAY3 DELAY2 DELAY1 DELAY0 ]
-    info_digitalout(uint8_t []);
+    info_digitalout(uint8_t [], unsigned int);
 
     // Cut delay by given number
     void cutDelay(unsigned int);
@@ -43,13 +43,13 @@ info_digitalout::info_digitalout(const info_digitalout &new_info)
     delay = new_info.delay;
 }
 
-info_digitalout::info_digitalout(uint8_t byte_packet[])
+info_digitalout::info_digitalout(uint8_t byte_packet[], unsigned int start)
 {
-    pin = byte_packet[0];
-    state = byte_packet[1];
+    pin = byte_packet[start];
+    state = byte_packet[start+1];
 
-    delay = byte_packet[2];
-    for(int i = 3; i<=5;i++)
+    delay = byte_packet[start+2];
+    for(int i = start+3; i<=start+5;i++)
     {
         delay <<= 8;
         delay += byte_packet[i];

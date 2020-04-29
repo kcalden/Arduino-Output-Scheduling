@@ -10,7 +10,7 @@
 StaticQueue<info_digitalout, SCHEDULE_LIMIT> write_schedule;
 
 // Interpret command
-void interpretCMDByte(uint8_t cmd_byte);
+void interpretCMDPacket(uint8_t packet[]);
 
 void setup() {
   // Initialize timers
@@ -23,19 +23,22 @@ void setup() {
 }
 
 // Eight byte packet buffer
-uint8_t packet_buf[9];
+uint8_t packet_buf[8];
 
 void loop() {
   while(Serial.available())
   {
-    // Read into the buffer and write it to the schedule
-    switch (Serial.readBytes(packet_buf, 6))
+    // Read packet
+    Serial.readBytes(packet_buf, 8);
+
+    // Interpret packet
+    switch (packet_buf[0])
     {
-      case 1: // Command byte
-        interpretCMDByte(packet_buf[0]);
+      case 0x01: // Command
+        interpretCMDPacket(packet_buf);
         break;
-      case 6: // Output and delay packet
-        info_digitalout new_info = packet_buf;
+      case 0x02: // Output and delay packet
+        info_digitalout new_info(packet_buf,1);
 
         // If the buffer was empty, immediately trigger the interrupt
         if(write_schedule.empty()) set_TCNT1(0);
@@ -46,12 +49,11 @@ void loop() {
 }
 
 // Interpret a command
-void interpretCMDByte(uint8_t cmd_byte)
+void interpretCMDPacket(uint8_t packet[])
 {
-  switch(cmd_byte)
+  switch(packet[1])
   {
-    // Request items left to send
-    case 0x01:
+    case 0x01: // Memory remaining on the schedule
       unsigned int items_left = write_schedule.itemsLeft();
       Serial.write((uint8_t)((items_left&0xFF00)>>8));
       Serial.write((uint8_t)(items_left&0xFF));
