@@ -65,7 +65,7 @@ info_struct & StaticQueue<info_struct,stack_size>::pop()
         unsigned int new_current_index = (current_index+1) % stack_size;
         current_index = new_current_index;
     }
-
+    size--;
     return queue[popped_index];
 }
 
