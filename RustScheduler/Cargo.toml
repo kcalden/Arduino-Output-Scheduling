@@ -1,0 +1,10 @@
+[package]
+name = "rust_scheduler"
+version = "0.1.0"
+authors = ["Karl Calden <33008330+kcalden@users.noreply.github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serialport = "3.3.0"
